@@ -54,9 +54,6 @@
         modalSentence: document.getElementById("modal-sentence"),
         btnModalNext: document.getElementById("btn-modal-next"),
         btnReplayVoice: document.getElementById("btn-replay-voice"),
-        btnToggleDyslexic: document.getElementById("btn-toggle-dyslexic"),
-        btnToggleContrast: document.getElementById("btn-toggle-contrast"),
-        btnToggleGrammar: document.getElementById("btn-toggle-grammar"),
         btnToggleSound: document.getElementById("btn-toggle-sound"),
         btnToggleVoice: document.getElementById("btn-toggle-voice"),
         grammarLegend: document.getElementById("grammar-legend")
@@ -159,27 +156,7 @@
         soundManager.speak(sentenceText);
       });
 
-      // Toggles d'accessibilité
-      this.dom.btnToggleDyslexic.addEventListener("click", () => {
-        const active = document.body.classList.toggle("font-dyslexic");
-        this.dom.btnToggleDyslexic.classList.toggle("active", active);
-        soundManager.playPop();
-      });
-
-      this.dom.btnToggleContrast.addEventListener("click", () => {
-        const active = document.body.classList.toggle("high-contrast");
-        this.dom.btnToggleContrast.classList.toggle("active", active);
-        soundManager.playPop();
-      });
-
-      this.dom.btnToggleGrammar.addEventListener("click", () => {
-        this.showGrammar = !this.showGrammar;
-        document.body.classList.toggle("show-grammar", this.showGrammar);
-        this.dom.btnToggleGrammar.classList.toggle("active", this.showGrammar);
-        this.dom.grammarLegend.style.display = this.showGrammar ? "flex" : "none";
-        soundManager.playPop();
-      });
-
+      // Contrôles Audio (Son et Synthèse vocale)
       this.dom.btnToggleSound.addEventListener("click", () => {
         const enabled = soundManager.toggleSound();
         this.dom.btnToggleSound.classList.toggle("active", enabled);

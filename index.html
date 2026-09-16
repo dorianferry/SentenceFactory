@@ -12,38 +12,29 @@
   
   <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body class="show-grammar">
   <canvas id="confetti-canvas"></canvas>
 
   <div class="app-container">
-    <!-- En-tête avec logo et barre d'accessibilité -->
+    <!-- En-tête compact avec titre et icônes audio -->
     <header class="app-header" role="banner">
       <div class="brand">
         <div class="logo-badge" aria-hidden="true">🧩</div>
         <div class="brand-titles">
-          <h1>La Fabrique à Phrases</h1>
+          <div class="title-with-actions">
+            <h1>La Fabrique à Phrases</h1>
+            <div class="header-audio-controls">
+              <button id="btn-toggle-sound" class="icon-btn active icon-btn-compact" title="Activer ou couper les effets sonores" aria-label="Effets sonores">
+                <span aria-hidden="true">🔔</span>
+              </button>
+              <button id="btn-toggle-voice" class="icon-btn active icon-btn-compact" title="Activer ou désactiver la synthèse vocale" aria-label="Lecture vocale automatique">
+                <span aria-hidden="true">🗣️</span>
+              </button>
+            </div>
+          </div>
           <p class="subtitle">Assemble les étiquettes pour former les bonnes phrases !</p>
         </div>
       </div>
-
-      <!-- Barre d'outils d'accessibilité -->
-      <nav class="top-toolbar" aria-label="Paramètres d'accessibilité et audio">
-        <button id="btn-toggle-dyslexic" class="icon-btn" title="Activer la police adaptée à la dyslexie" aria-label="Police dyslexie">
-          <span aria-hidden="true">🔤</span> <span class="btn-label">Dyslexie</span>
-        </button>
-        <button id="btn-toggle-contrast" class="icon-btn" title="Basculer en mode fort contraste" aria-label="Fort contraste">
-          <span aria-hidden="true">🌓</span> <span class="btn-label">Contraste</span>
-        </button>
-        <button id="btn-toggle-grammar" class="icon-btn active" title="Afficher les couleurs par catégorie grammaticale" aria-label="Couleurs grammaticales">
-          <span aria-hidden="true">🎨</span> <span class="btn-label">Grammaire</span>
-        </button>
-        <button id="btn-toggle-sound" class="icon-btn active" title="Activer ou couper les effets sonores" aria-label="Effets sonores">
-          <span aria-hidden="true">🔔</span>
-        </button>
-        <button id="btn-toggle-voice" class="icon-btn active" title="Activer ou désactiver la synthèse vocale" aria-label="Lecture vocale automatique">
-          <span aria-hidden="true">🗣️</span>
-        </button>
-      </nav>
     </header>
 
     <!-- Navigation des modes de difficulté -->
