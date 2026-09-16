@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>La Fabrique à Phrases - Jeu de Mots Accessible</title>
+  
+  <!-- Polices conviviales et lisibles -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <canvas id="confetti-canvas"></canvas>
+
+  <div class="app-container">
+    <!-- En-tête avec logo et barre d'accessibilité -->
+    <header class="app-header" role="banner">
+      <div class="brand">
+        <div class="logo-badge" aria-hidden="true">🧩</div>
+        <div class="brand-titles">
+          <h1>La Fabrique à Phrases</h1>
+          <p class="subtitle">Assemble les étiquettes pour former les bonnes phrases !</p>
+        </div>
+      </div>
+
+      <!-- Barre d'outils d'accessibilité -->
+      <nav class="top-toolbar" aria-label="Paramètres d'accessibilité et audio">
+        <button id="btn-toggle-dyslexic" class="icon-btn" title="Activer la police adaptée à la dyslexie" aria-label="Police dyslexie">
+          <span aria-hidden="true">🔤</span> <span class="btn-label">Dyslexie</span>
+        </button>
+        <button id="btn-toggle-contrast" class="icon-btn" title="Basculer en mode fort contraste" aria-label="Fort contraste">
+          <span aria-hidden="true">🌓</span> <span class="btn-label">Contraste</span>
+        </button>
+        <button id="btn-toggle-grammar" class="icon-btn active" title="Afficher les couleurs par catégorie grammaticale" aria-label="Couleurs grammaticales">
+          <span aria-hidden="true">🎨</span> <span class="btn-label">Grammaire</span>
+        </button>
+        <button id="btn-toggle-sound" class="icon-btn active" title="Activer ou couper les effets sonores" aria-label="Effets sonores">
+          <span aria-hidden="true">🔔</span>
+        </button>
+        <button id="btn-toggle-voice" class="icon-btn active" title="Activer ou désactiver la synthèse vocale" aria-label="Lecture vocale automatique">
+          <span aria-hidden="true">🗣️</span>
+        </button>
+      </nav>
+    </header>
+
+    <!-- Navigation des modes de difficulté -->
+    <nav class="nav-tabs" role="tablist" aria-label="Choix de la difficulté">
+      <button class="tab-btn active" data-difficulty="easy" role="tab" aria-selected="true">
+        <span>🌱</span> Facile (Apprenti)
+      </button>
+      <button class="tab-btn" data-difficulty="medium" role="tab" aria-selected="false">
+        <span>🔍</span> Moyen (Avec Intrus)
+      </button>
+      <button class="tab-btn" data-difficulty="hard" role="tab" aria-selected="false">
+        <span>🏆</span> Difficile (Accords)
+      </button>
+      <button class="tab-btn" data-difficulty="sandbox" role="tab" aria-selected="false">
+        <span>🎨</span> Bac à sable (Libre)
+      </button>
+    </nav>
+
+    <!-- Bannière du niveau actif -->
+    <section class="level-banner" aria-labelledby="level-heading">
+      <div class="banner-top">
+        <div class="level-indicator">
+          <span id="level-badge" class="level-badge">Niveau 1 / 5</span>
+          <h2 id="level-heading" class="level-title">Le félin</h2>
+        </div>
+        <div class="level-controls">
+          <button id="btn-prev-level" class="nav-arrow-btn" title="Niveau précédent" aria-label="Niveau précédent">◀</button>
+          <button id="btn-next-level" class="nav-arrow-btn" title="Niveau suivant" aria-label="Niveau suivant">▶</button>
+        </div>
+      </div>
+
+      <div id="hint-container" class="hint-box" role="status">
+        <span aria-hidden="true">💡</span>
+        <span id="hint-text">Un animal paisible en pleine sieste</span>
+      </div>
+    </section>
+
+    <!-- Légende grammaticale -->
+    <div id="grammar-legend" class="grammar-legend" aria-label="Légende des couleurs grammaticales">
+      <div class="legend-item"><span class="legend-pill" style="background: var(--tile-article)"></span> Article</div>
+      <div class="legend-item"><span class="legend-pill" style="background: var(--tile-noun)"></span> Nom</div>
+      <div class="legend-item"><span class="legend-pill" style="background: var(--tile-verb)"></span> Verbe</div>
+      <div class="legend-item"><span class="legend-pill" style="background: var(--tile-adj)"></span> Adjectif</div>
+      <div class="legend-item"><span class="legend-pill" style="background: var(--tile-prep)"></span> Préposition</div>
+      <div class="legend-item"><span class="legend-pill" style="background: var(--tile-punct)"></span> Ponctuation</div>
+    </div>
+
+    <!-- ZONE DE CONSTRUCTION : LA PHRASE DU JOUEUR -->
+    <main class="sentence-zone-wrapper">
+      <div class="zone-label-row">
+        <span class="zone-label">
+          <span aria-hidden="true">✍️</span> Ta phrase :
+        </span>
+        <button id="btn-speak-sentence" class="speak-phrase-btn" title="Écouter la phrase à voix haute" aria-label="Écouter la phrase">
+          <span aria-hidden="true">🔊</span> Écouter
+        </button>
+      </div>
+
+      <div id="sentence-dropzone" 
+           class="sentence-dropzone" 
+           role="region" 
+           aria-live="polite" 
+           aria-label="Zone de ta phrase. Glisse ou clique sur les mots pour les placer ici.">
+        <p class="dropzone-empty-placeholder">Clique ou glisse des mots ci-dessous pour composer ta phrase...</p>
+      </div>
+    </main>
+
+    <!-- ZONE DU PANIER : MOTS DISPONIBLES -->
+    <section class="bank-zone-wrapper" aria-labelledby="bank-label">
+      <div class="zone-label-row">
+        <span id="bank-label" class="zone-label">
+          <span aria-hidden="true">📦</span> Mots disponibles :
+        <span id="words-count-info" class="subtitle" style="font-size: 0.85rem; color: var(--text-muted);"></span>
+      </div>
+
+      <div id="sandbox-filters" class="sandbox-filter-bar" style="display: none;" role="toolbar" aria-label="Filtrer les mots par catégorie">
+        <button type="button" class="filter-chip active" data-filter="all">Tous (119)</button>
+        <button type="button" class="filter-chip" data-filter="article">Articles</button>
+        <button type="button" class="filter-chip" data-filter="noun">Noms</button>
+        <button type="button" class="filter-chip" data-filter="verb">Verbes</button>
+        <button type="button" class="filter-chip" data-filter="adj">Adjectifs</button>
+        <button type="button" class="filter-chip" data-filter="prep">Prépositions</button>
+        <button type="button" class="filter-chip" data-filter="other">Autres</button>
+      </div>
+
+      <div id="words-bank" 
+           class="words-bank" 
+           role="group" 
+           aria-label="Réserve de mots disponibles">
+        <!-- Étiquettes générées dynamiquement -->
+      </div>
+    </section>
+
+    <!-- BARRE D'ACTIONS -->
+    <footer class="action-dock">
+      <div class="action-group">
+        <button id="btn-reset" class="secondary-btn" title="Remettre tous les mots dans la réserve" aria-label="Réinitialiser les mots">
+          <span aria-hidden="true">🔄</span> Réinitialiser
+        </button>
+        <button id="btn-hint" class="secondary-btn" title="Placer automatiquement le prochain mot" aria-label="Obtenir un coup de pouce">
+          <span aria-hidden="true">✨</span> Coup de pouce
+        </button>
+      </div>
+
+      <button id="btn-validate" class="primary-btn" title="Vérifier la validité de la phrase" aria-label="Vérifier ma phrase">
+        <span aria-hidden="true">✅</span> Vérifier la phrase
+      </button>
+    </footer>
+  </div>
+
+  <!-- MODALE DE FÉLICITATION -->
+  <div id="celebration-modal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="celebration-card">
+      <div class="celebration-icon" aria-hidden="true">🎉</div>
+      <h2 id="modal-title" class="celebration-title">Bravo ! C'est parfait !</h2>
+      <p id="modal-sentence" class="celebration-phrase">"Le chat dort sur le coussin."</p>
+      <div class="celebration-actions">
+        <button id="btn-replay-voice" class="secondary-btn">
+          <span aria-hidden="true">🔊</span> Réécouter
+        </button>
+        <button id="btn-modal-next" class="primary-btn">
+          <span>Suivant</span> <span aria-hidden="true">➔</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts sans dépendance externe, fonctionnant en local ou sur serveur -->
+  <script src="levels.js"></script>
+  <script src="audio.js"></script>
+  <script src="confetti.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
