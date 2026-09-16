@@ -66,12 +66,34 @@
     <section class="level-banner" aria-labelledby="level-heading">
       <div class="banner-top">
         <div class="level-indicator">
-          <span id="level-badge" class="level-badge">Niveau 1 / 5</span>
-          <h2 id="level-heading" class="level-title">Le félin</h2>
+          <span id="level-badge" class="level-badge">Facile : 1 / 10</span>
+          <h2 id="level-heading" class="level-title">Phrase 1 : Le félin</h2>
         </div>
-        <div class="level-controls">
-          <button id="btn-prev-level" class="nav-arrow-btn" title="Niveau précédent" aria-label="Niveau précédent">◀</button>
-          <button id="btn-next-level" class="nav-arrow-btn" title="Niveau suivant" aria-label="Niveau suivant">▶</button>
+        <div id="level-nav-controls" class="level-controls">
+          <button id="btn-prev-level" class="nav-btn-pill" title="Phrase précédente" aria-label="Phrase précédente">
+            <span aria-hidden="true">◀</span> <span>Précédente</span>
+          </button>
+          <button id="btn-next-level" class="nav-btn-pill primary-nav" title="Phrase suivante" aria-label="Phrase suivante">
+            <span>Suivante</span> <span aria-hidden="true">▶</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Sélecteur visuel interactif de toutes les phrases du niveau -->
+      <div id="sentences-selector-container" class="sentences-selector-container">
+        <div class="selector-header">
+          <span class="selector-label">
+            <span aria-hidden="true">🎯</span> Choisis une phrase :
+          </span>
+          <span id="progression-label" class="progression-label">0 / 10 réussie(s)</span>
+        </div>
+
+        <div id="sentence-stepper-list" class="sentence-stepper-list" role="tablist" aria-label="Toutes les phrases de la catégorie">
+          <!-- Bulles numérotées 1 à 10 générées dynamiquement -->
+        </div>
+
+        <div class="progress-track" aria-hidden="true">
+          <div id="progress-bar-fill" class="progress-bar-fill" style="width: 0%;"></div>
         </div>
       </div>
 

@@ -324,28 +324,144 @@ body {
   gap: 0.5rem;
 }
 
-.nav-arrow-btn {
-  background: #f1f5f9;
-  border: none;
-  width: 38px;
-  height: 38px;
-  border-radius: 50%;
-  font-size: 1.1rem;
+/* Boutons de navigation explicites (Précédente / Suivante) */
+.nav-btn-pill {
+  background: var(--bg-card);
+  border: 2px solid #e2e8f0;
+  color: var(--text-main);
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-full);
+  font-family: inherit;
+  font-size: 0.92rem;
+  font-weight: 700;
   cursor: pointer;
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  justify-content: center;
-  transition: all 0.15s;
+  gap: 0.45rem;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.04);
+  transition: all 0.15s ease;
+  user-select: none;
 }
 
-.nav-arrow-btn:hover:not(:disabled) {
-  background: #e2e8f0;
+.nav-btn-pill:hover:not(:disabled) {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+  transform: translateY(-1px);
+}
+
+.nav-btn-pill:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.nav-btn-pill.primary-nav {
+  background: var(--color-primary-light);
+  border-color: var(--color-primary);
+  color: var(--color-primary-dark);
+}
+
+.nav-btn-pill.primary-nav:hover:not(:disabled) {
+  background: #c7d2fe;
+}
+
+/* Sélecteur visuel de phrases (1 à 10) */
+.sentences-selector-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding: 0.75rem 0.9rem;
+  background: #f8fafc;
+  border-radius: var(--radius-md);
+  border: 1px solid #e2e8f0;
+}
+
+.selector-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.progression-label {
+  color: var(--color-success-dark);
+  background: #dcfce7;
+  padding: 0.2rem 0.6rem;
+  border-radius: var(--radius-full);
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.sentence-stepper-list {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  overflow-x: auto;
+  padding: 0.25rem 0.1rem 0.4rem;
+  scrollbar-width: thin;
+}
+
+.step-pill {
+  min-width: 44px;
+  height: 42px;
+  padding: 0 0.6rem;
+  border-radius: var(--radius-md);
+  border: 2px solid #cbd5e1;
+  background: var(--bg-card);
+  color: var(--text-main);
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.step-pill:hover {
+  border-color: var(--color-primary);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+}
+
+.step-pill.active {
+  background: var(--color-primary);
+  color: white;
+  border-color: var(--color-primary-dark);
+  box-shadow: 0 4px 10px rgba(99, 102, 241, 0.35);
   transform: scale(1.06);
 }
 
-.nav-arrow-btn:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
+.step-pill.completed {
+  border-color: var(--color-success);
+}
+
+.step-pill.completed::after {
+  content: "⭐";
+  font-size: 0.8rem;
+  margin-left: 2px;
+}
+
+/* Barre de progression */
+.progress-track {
+  height: 6px;
+  background: #e2e8f0;
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  margin-top: 0.1rem;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #6366f1, #10b981);
+  border-radius: var(--radius-full);
+  transition: width 0.35s ease;
 }
 
 /* Zone d'indice */

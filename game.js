@@ -19,14 +19,26 @@
       this.bankWords = [];     // Mots disponibles dans la réserve
       this.wordUidCounter = 0;
 
+      // Suivi de progression persisté
+      this.completedLevels = {};
+      try {
+        const savedCompleted = localStorage.getItem("phraseForge_completed");
+        if (savedCompleted) this.completedLevels = JSON.parse(savedCompleted);
+      } catch (e) {}
+
       // Éléments du DOM
       this.dom = {
         levelBadge: document.getElementById("level-badge"),
         levelHeading: document.getElementById("level-heading"),
         hintContainer: document.getElementById("hint-container"),
         hintText: document.getElementById("hint-text"),
+        levelNavControls: document.getElementById("level-nav-controls"),
         btnPrevLevel: document.getElementById("btn-prev-level"),
         btnNextLevel: document.getElementById("btn-next-level"),
+        sentencesSelectorContainer: document.getElementById("sentences-selector-container"),
+        sentenceStepperList: document.getElementById("sentence-stepper-list"),
+        progressionLabel: document.getElementById("progression-label"),
+        progressBarFill: document.getElementById("progress-bar-fill"),
         sentenceDropzone: document.getElementById("sentence-dropzone"),
         wordsBank: document.getElementById("words-bank"),
         wordsCountInfo: document.getElementById("words-count-info"),
@@ -220,6 +232,8 @@
         this.dom.hintText.textContent = level.description;
         this.dom.btnPrevLevel.style.display = "none";
         this.dom.btnNextLevel.style.display = "none";
+        if (this.dom.levelNavControls) this.dom.levelNavControls.style.display = "none";
+        if (this.dom.sentencesSelectorContainer) this.dom.sentencesSelectorContainer.style.display = "none";
         this.dom.btnHint.style.display = "none";
         this.dom.btnValidate.innerHTML = '<span>🌟</span> Écouter & Célébrer';
         if (this.dom.sandboxFilters) {
@@ -235,8 +249,10 @@
         });
       } else {
         const list = this.getCurrentLevelsList();
-        this.dom.btnPrevLevel.style.display = "flex";
-        this.dom.btnNextLevel.style.display = "flex";
+        this.dom.btnPrevLevel.style.display = "inline-flex";
+        this.dom.btnNextLevel.style.display = "inline-flex";
+        if (this.dom.levelNavControls) this.dom.levelNavControls.style.display = "flex";
+        if (this.dom.sentencesSelectorContainer) this.dom.sentencesSelectorContainer.style.display = "flex";
         this.dom.btnHint.style.display = "inline-flex";
         this.dom.btnValidate.innerHTML = '<span>✅</span> Vérifier la phrase';
         if (this.dom.sandboxFilters) {
@@ -247,9 +263,11 @@
         this.dom.btnNextLevel.disabled = this.currentLevelIndex === list.length - 1;
 
         const diffLabels = { easy: "Facile", medium: "Moyen", hard: "Difficile" };
-        this.dom.levelBadge.textContent = `${diffLabels[this.currentDifficulty]} : ${this.currentLevelIndex + 1} / ${list.length}`;
-        this.dom.levelHeading.textContent = level.title;
+        this.dom.levelBadge.textContent = `${diffLabels[this.currentDifficulty]} : Phrase ${this.currentLevelIndex + 1} / ${list.length}`;
+        this.dom.levelHeading.textContent = `Phrase ${this.currentLevelIndex + 1} : ${level.title}`;
         this.dom.hintText.textContent = level.hint;
+
+        this.renderSentenceStepper();
 
         const targetTokens = level.sentence.trim().split(/\s+/);
         const allWords = [...targetTokens];
@@ -271,6 +289,46 @@
       }
 
       this.render();
+    }
+
+    // --- Rendu du sélecteur de phrases (1 à 10) ---
+    renderSentenceStepper() {
+      if (!this.dom.sentenceStepperList) return;
+      this.dom.sentenceStepperList.innerHTML = "";
+      const list = this.getCurrentLevelsList();
+      let completedCount = 0;
+
+      list.forEach((lvl, i) => {
+        const isCompleted = !!this.completedLevels[lvl.id];
+        if (isCompleted) completedCount++;
+
+        const pill = document.createElement("button");
+        pill.type = "button";
+        pill.className = `step-pill ${i === this.currentLevelIndex ? "active" : ""} ${isCompleted ? "completed" : ""}`;
+        pill.textContent = `${i + 1}`;
+        pill.title = `Phrase ${i + 1} : ${lvl.title} ${isCompleted ? "(Réussie ⭐)" : ""}`;
+        pill.setAttribute("aria-label", `Aller à la phrase ${i + 1} : ${lvl.title}`);
+        pill.setAttribute("role", "tab");
+        pill.setAttribute("aria-selected", i === this.currentLevelIndex ? "true" : "false");
+
+        pill.addEventListener("click", () => {
+          if (this.currentLevelIndex !== i) {
+            this.currentLevelIndex = i;
+            soundManager.playPop();
+            this.loadLevel();
+          }
+        });
+
+        this.dom.sentenceStepperList.appendChild(pill);
+      });
+
+      if (this.dom.progressionLabel) {
+        this.dom.progressionLabel.textContent = `${completedCount} / ${list.length} réussie(s)`;
+      }
+      if (this.dom.progressBarFill) {
+        const pct = list.length > 0 ? (completedCount / list.length) * 100 : 0;
+        this.dom.progressBarFill.style.width = `${pct}%`;
+      }
     }
 
     // --- Rendu dans le DOM ---
@@ -653,6 +711,15 @@
         tiles.forEach(tile => tile.classList.add("correct"));
         soundManager.playSuccess();
         this.confetti.burst(90);
+
+        // Enregistrer la réussite pour la persistance des étoiles
+        if (level.id) {
+          this.completedLevels[level.id] = true;
+          try {
+            localStorage.setItem("phraseForge_completed", JSON.stringify(this.completedLevels));
+          } catch (e) {}
+          this.renderSentenceStepper();
+        }
 
         const cleanPhrase = this.buildSentenceString().replace(/\s+([.,!?;:])/g, "$1");
         if (soundManager.voiceEnabled) {
